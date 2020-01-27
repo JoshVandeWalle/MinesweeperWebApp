@@ -60,7 +60,7 @@ namespace MinesweeperWebApp.Controllers
             // if registration succeeds return the success view
             if (registerSuccess)
             {
-                return View("registersuccess");
+                return View("registerSuccess");
             }
 
             // otherwise return the registration failure view
