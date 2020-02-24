@@ -121,10 +121,13 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\GameController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\BoardModel.cs" />
+    <Compile Include="Models\CellModel.cs" />
     <Compile Include="Models\CredentialModel.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -173,6 +176,9 @@
     <Content Include="Views\Account\registerFail.cshtml" />
     <Content Include="Views\Account\ShowRegistrationForm.cshtml" />
     <Content Include="Views\Account\ShowLoginForm.cshtml" />
+    <Content Include="Views\Game\gameBoard.cshtml" />
+    <Content Include="Views\Game\gameWon.cshtml" />
+    <Content Include="Views\Game\gameLost.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

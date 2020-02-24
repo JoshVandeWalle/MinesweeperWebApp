@@ -27,12 +27,20 @@ namespace MinesweeperWebApp
                 defaults: new { controller = "Account", action = "ShowRegistrationForm", id = UrlParameter.Optional }
             );
 
-             routes.MapRoute(
+            routes.MapRoute(
+                name: "play",
+                url: "{controller}/{action}",
+                defaults: new { controller = "Game", action = "StartGame", id = UrlParameter.Optional }
+            );
+
+            routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
 
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             ); 
+
+
         }
     }
 }
