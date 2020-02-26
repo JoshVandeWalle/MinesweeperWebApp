@@ -73,3 +73,4 @@ C:\Users\t34su\source\repos\MinesweeperWebApp\MinesweeperWebApp\obj\Debug\Minesw
 C:\Users\t34su\source\repos\MinesweeperWebApp\MinesweeperWebApp\obj\Debug\MinesweeperWebApp.csproj.CopyComplete
 C:\Users\t34su\source\repos\MinesweeperWebApp\MinesweeperWebApp\obj\Debug\MinesweeperWebApp.dll
 C:\Users\t34su\source\repos\MinesweeperWebApp\MinesweeperWebApp\obj\Debug\MinesweeperWebApp.pdb
+C:\Users\t34su\source\repos\MinesweeperWebApp\MinesweeperWebApp\obj\Debug\MinesweeperWebApp.csprojAssemblyReference.cache
