@@ -1,40 +1,67 @@
 ﻿
 @{
-    ViewBag.Title = "gameBoard";
-}
-
-<h2>gameBoard</h2>
-
-@using (Html.BeginForm("HandleCellClick", "Game"))
-{
-
-    for (int i = 0; i < Model.Size; i++)
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    AjaxOptions ajaxOptions = new AjaxOptions
     {
-        for (int j = 0; j < Model.Size; j++)
-        {
-
-
-
-
-        <button type="submit" name="cell" value="@i,@j">
-            @if (Model.Grid[i,j].Visited == false)
-            {
-                <p>?</p>
-            }
-
-            else if (Model.Grid[i, j].liveNeighbors == 0)
-            {
-                <p>-</p>
-            }
-
-            else
-            {
-                <p>@Model.Grid[i,j].liveNeighbors </p>
-
-            }
-        </button>
-        }
-        <br />
-    }
+        HttpMethod = "POST",
+        InsertionMode = InsertionMode.Replace,
+        UpdateTargetId = "grid"
+    };
 }
 
+<html>
+<head>
+
+    
+
+
+
+    <style>
+        .game-piece {
+            width: 45px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>gameBoard</h2>
+    <br />
+   
+
+    @using (Ajax.BeginForm("HandleCellClick", "Game", ajaxOptions, new { id = "grid" }))
+    {
+
+        @Html.AntiForgeryToken();
+
+        <div id="grid">
+            <p>Time: </p> @Model.Timer.ToString()
+                <br />
+            @for (int i = 0; i < Model.Board.Size; i++)
+            {
+                for (int j = 0; j < Model.Board.Size; j++)
+                {
+                    <button class="game-piece" game-piece" type="submit" name="cell" value="@i,@j">
+                        @if (Model.Board.Grid[i, j].Visited == false)
+                        {
+                            <p>?</p>
+                        }
+
+                        else if (Model.Board.Grid[i, j].liveNeighbors == 0)
+                        {
+                            <p>-</p>
+                        }
+
+                        else
+                        {
+                            <p>@Model.Board.Grid[i, j].liveNeighbors </p>
+
+                        }
+                    </button>
+                }
+                <br />
+            }
+        </div>
+
+    }
+</body>
+</html>

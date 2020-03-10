@@ -14,7 +14,7 @@ namespace MinesweeperWebApp.Models
         public int Size;
 
         // game difficulty is the percentage liklihood that a given Cell will be live
-        private const int MINE_LIKLIHOOD = 10;
+        private int MINE_LIKLIHOOD = 10;
 
         public bool gameOver { get; set; }
 

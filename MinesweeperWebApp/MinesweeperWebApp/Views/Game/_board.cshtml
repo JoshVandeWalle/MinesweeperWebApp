@@ -1,7 +1,4 @@
 ﻿@model MinesweeperWebApp.Models.GameBundle
-@{
-    ViewBag.Title = "gameWon";
-}
 
 <html>
 
@@ -13,7 +10,6 @@
     </style>
 </head>
 <body>
-    <h2>You Won!</h2><br />
     <p>Time: </p> @Model.Timer.ToString()
     <br />
     @for (int i = 0; i < Model.Board.Size; i++)
@@ -21,14 +17,19 @@
         for (int j = 0; j < Model.Board.Size; j++)
         {
             <button class="game-piece" type="submit" name="cell" value="@i,@j">
-                @if (Model.Board.Grid[i, j].Live == true)
+                @if (Model.Board.Grid[i, j].Visited == false)
                 {
-                    <p>!</p>
+                    <p>?</p>
+                }
+
+                else if (Model.Board.Grid[i, j].liveNeighbors == 0)
+                {
+                    <p>-</p>
                 }
 
                 else
                 {
-                    <p>-</p>
+                    <p>@Model.Board.Grid[i, j].liveNeighbors </p>
 
                 }
             </button>
@@ -37,5 +38,4 @@
     }
 </body>
 </html>
-
 

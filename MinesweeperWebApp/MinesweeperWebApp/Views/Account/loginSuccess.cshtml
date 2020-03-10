@@ -5,5 +5,23 @@
 
 <h2>Login Success</h2>
 
+@using (Html.BeginForm("StartGame", "Game"))
+{
+    @Html.AntiForgeryToken();
+
+    @Html.RadioButton("difficulty", 0, false);
+    @Html.Label("Easy");<br />
+    @Html.RadioButton("difficulty", 1, true);
+    @Html.Label("Normal");<br />
+    @Html.RadioButton("difficulty", 2, false);
+    @Html.Label("Hard");<br />
+
+    <br />
+
+
+    <input type="submit" id="SubmitButton" value="Play Game" />
+}
+
+
 <a href="../Game/StartGame">Play Game!</a>
 
