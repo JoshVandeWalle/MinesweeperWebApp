@@ -1,13 +1,99 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using MinesweeperWebApp.Models;
+using MinesweeperWebApp.Services.Data;
+using MinesweeperWebApp.Services.Utility;
 
 namespace MinesweeperWebApp.Services.Business
 {
+    /*
+     * This class is a business service for the GameStorageModel object model
+    */
     public class GameService
     {
+        /*
+         * this method saves a game 
+         */
+        public bool Save(GameStorageModel storageModel)
+        {
+            // assume the game will not be saved
+            bool success = false;
+
+            // databse connection string
+            String connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=MinesweeperDatabase;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+
+            // connect to databse in business service to support ACID transactions
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                // instantiate DAO
+                GameDAO dao = new GameDAO(connection);
+
+                // open databse connection
+               connection.Open();
+
+                // pass control to DAO to delete user previous save
+               dao.Delete(storageModel.User);
+
+                // pass control to DAO to save the current game and catch return value
+               success = dao.Create(storageModel);
+
+                // close database connection
+               connection.Close();
+            }
+
+            // return result of save attempt 
+            return success;
+        }
+
+        /*
+         * this method loads a user's saved game
+         */
+        public GameStorageModel Load(string user)
+        {
+            // database conection string
+            String connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=MinesweeperDatabase;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+
+            // prepare list of storage models to hold DAO method return value
+            List<GameStorageModel> results = new List<GameStorageModel>();
+
+            // connect to database in business service
+            // this design supports ACID transactions and is a best practice
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                // instantiate DAO
+                GameDAO dao = new GameDAO(connection);
+
+                // open connection to database
+                connection.Open();
+
+                // pass control to DAO to read the user's saved game and catch return value with list
+                results = dao.Read(user);
+
+                // close databse connection
+                connection.Close();
+                
+                // if the save wasn't found
+                if (results.Count != 1)
+                {
+                    return null;
+                }
+
+                // othwerwise return the loaded game
+                else
+                {
+                    // transform list to array to acces the game 
+                    return results.ToArray()[0];
+                }
+                
+            }
+        }
+
+       
+
+
         // lay the mines
         public GameBundle SetupLiveNeighbors(GameBundle bundle)
         {

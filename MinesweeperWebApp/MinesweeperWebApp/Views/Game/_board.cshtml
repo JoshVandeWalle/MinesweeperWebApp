@@ -3,38 +3,76 @@
 <html>
 
 <head>
+
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
     <style>
-        .game-piece {
+        .game-button {
             width: 45px;
         }
     </style>
+
+    <script>
+        $(document).ready(function () {
+            $(document).contextmenu(function () {
+                return false;
+            });
+
+            $('.game-button').mousedown(function (event) {
+                if (event.which == 3) {
+                    console.log("right click");
+                    console.log(this.getAttribute("value"));
+
+                    // send information to controller
+
+                    // URL, data, callback
+                    $.post("@Url.Action("HandleCellRightClick", "Game")", { cell: this.getAttribute("value")}, function (data) {
+                        console.log(data);
+                        // refresh
+                        $("body").html(data);
+                    });
+                }
+            });
+        });
+    </script>
 </head>
 <body>
+    <h2>Minesweeper!</h2>
+    <br />
     <p>Time: </p> @Model.Timer.ToString()
     <br />
-    @for (int i = 0; i < Model.Board.Size; i++)
+
+    @using (Html.BeginForm("HandleCellClick", "Game"))
     {
-        for (int j = 0; j < Model.Board.Size; j++)
+
+        for (int i = 0; i < Model.Board.Size; i++)
         {
-            <button class="game-piece" type="submit" name="cell" value="@i,@j">
-                @if (Model.Board.Grid[i, j].Visited == false)
-                {
-                    <p>?</p>
-                }
+            for (int j = 0; j < Model.Board.Size; j++)
+            {
+                <button class="game-button" type="submit" name="cell" value="@i,@j">
+                    @if (Model.Board.Grid[i, j].Visited == false && Model.Board.Grid[i, j].isFlagged == false)
+                    {
+                        <p>?</p>
+                    }
 
-                else if (Model.Board.Grid[i, j].liveNeighbors == 0)
-                {
-                    <p>-</p>
-                }
+                    else if (Model.Board.Grid[i, j].Visited == false && Model.Board.Grid[i, j].isFlagged == true)
+                    {
+                        <p>F</p>
+                    }
 
-                else
-                {
-                    <p>@Model.Board.Grid[i, j].liveNeighbors </p>
+                    else if (Model.Board.Grid[i, j].liveNeighbors == 0)
+                    {
+                        <p>-</p>
+                    }
 
-                }
-            </button>
+                    else
+                    {
+                        <p>@Model.Board.Grid[i, j].liveNeighbors </p>
+
+                    }
+                </button>
+            }
+            <br />
         }
-        <br />
     }
 </body>
 </html>

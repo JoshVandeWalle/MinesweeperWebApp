@@ -1,0 +1,2 @@
+C:\Users\t34su\source\repos\MinesweeperWebApp\MinesweeperRestService\obj\Debug\MinesweeperRestService.csprojAssemblyReference.cache
+C:\Users\t34su\source\repos\MinesweeperWebApp\MinesweeperRestService\obj\Debug\MinesweeperRestService.csproj.CoreCompileInputs.cache

@@ -74,3 +74,6 @@ C:\Users\t34su\source\repos\MinesweeperWebApp\MinesweeperWebApp\obj\Debug\Minesw
 C:\Users\t34su\source\repos\MinesweeperWebApp\MinesweeperWebApp\obj\Debug\MinesweeperWebApp.dll
 C:\Users\t34su\source\repos\MinesweeperWebApp\MinesweeperWebApp\obj\Debug\MinesweeperWebApp.pdb
 C:\Users\t34su\source\repos\MinesweeperWebApp\MinesweeperWebApp\obj\Debug\MinesweeperWebApp.csprojAssemblyReference.cache
+C:\Users\t34su\source\repos\MinesweeperWebApp\MinesweeperWebApp\bin\NLog.config
+C:\Users\t34su\source\repos\MinesweeperWebApp\MinesweeperWebApp\bin\NLog.dll
+C:\Users\t34su\source\repos\MinesweeperWebApp\MinesweeperWebApp\bin\NLog.xml

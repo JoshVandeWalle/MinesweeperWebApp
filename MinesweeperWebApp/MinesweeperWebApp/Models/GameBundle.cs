@@ -11,6 +11,7 @@ namespace MinesweeperWebApp.Models
         public int Difficulty { get; set; }
         public TimeSpan Timer { get; set; }
         public DateTime StartTime { get; set; }
+        public string User { get; set; }
         public int Row;
         public int Column;
 

@@ -1,0 +1,7 @@
+C:\Users\t34su\source\repos\MinesweeperWebApp\Rest\bin\Rest.dll.config
+C:\Users\t34su\source\repos\MinesweeperWebApp\Rest\bin\Rest.dll
+C:\Users\t34su\source\repos\MinesweeperWebApp\Rest\bin\Rest.pdb
+C:\Users\t34su\source\repos\MinesweeperWebApp\Rest\obj\Debug\Rest.csprojAssemblyReference.cache
+C:\Users\t34su\source\repos\MinesweeperWebApp\Rest\obj\Debug\Rest.csproj.CoreCompileInputs.cache
+C:\Users\t34su\source\repos\MinesweeperWebApp\Rest\obj\Debug\Rest.dll
+C:\Users\t34su\source\repos\MinesweeperWebApp\Rest\obj\Debug\Rest.pdb

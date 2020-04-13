@@ -5,6 +5,22 @@
 
 <h2>Login Success</h2>
 
+@if (Model != null)
+{
+    if (Model is Boolean)
+    {
+        if (Model == true)
+        {
+            <p>The game was saved successfully!</p>
+        }
+
+        else
+        {
+            <p>There was an error saving the game.</p>
+        }
+    }
+}
+
 @using (Html.BeginForm("StartGame", "Game"))
 {
     @Html.AntiForgeryToken();

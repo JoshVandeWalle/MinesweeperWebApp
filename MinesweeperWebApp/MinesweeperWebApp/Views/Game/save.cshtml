@@ -1,0 +1,27 @@
+﻿@model bool
+@{
+    ViewBag.Title = "Save Game";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+
+</head>
+
+<body>
+    <br />
+    <div>
+        @if (Model == true)
+        {
+            <p>The game was saved successfully</p>
+        }
+
+        else
+        {
+            <p>There was a problem saving the game</p>
+        }
+    </div>
+</body>
+
+
+

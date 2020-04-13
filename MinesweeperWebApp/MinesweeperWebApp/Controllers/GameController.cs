@@ -4,7 +4,10 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using MinesweeperWebApp.Models;
+using MinesweeperWebApp.Services;
 using MinesweeperWebApp.Services.Business;
+using MinesweeperWebApp.Services.Utility;
+using Newtonsoft.Json;
 
 namespace MinesweeperWebApp.Controllers
 {
@@ -13,29 +16,32 @@ namespace MinesweeperWebApp.Controllers
      */
     public class GameController : Controller
     {
-
-        public static BoardModel Board { get; set; } = new BoardModel(10);
         public static GameBundle Bundle { get; set; }
+
+        
 
         // start the game
         public ActionResult StartGame(string difficulty)
         {
+            // the difficulty the player selected on the previous form
             int chosenDifficulty = Int32.Parse(difficulty);
 
+            // instaniate game bundle. The bundle model includes all models and primitives related to the game.
             Bundle = new GameBundle(chosenDifficulty);
 
+            Bundle.User = Cache.AccessCache().Get("activeAccount");
+
+            // instantiate game service
+            // the game service is a Business Logic Layer class that enforces rules & logic
             GameService gameService = new GameService();
+
             // deploy mines
-            //Board.setupLiveNeighbors();
             gameService.SetupLiveNeighbors(Bundle);
 
             // calculate neighbor counts for each cell
-            //Board.calculateLiveNeighbors();
-
             gameService.CalculateLiveNeighbors(Bundle);
 
             // return the game board view
-            //return View("gameBoard", Board);
             return View("gameBoard", Bundle);
         }
 
@@ -44,6 +50,7 @@ namespace MinesweeperWebApp.Controllers
          */
         public ActionResult HandleCellClick(string cell)
         {
+            MyLogger.GetInstance().Info("Entering GameController.HandleCellClick()");
             GameService gameService = new GameService();
 
             string[] coords = cell.Split(',');
@@ -52,28 +59,126 @@ namespace MinesweeperWebApp.Controllers
             Bundle.Row = Convert.ToInt32(coords[0]);
             Bundle.Column = Convert.ToInt32(coords[1]);
 
-            // update board
-            //int result = Board.Update(row, col);
-            int result = gameService.Update(Bundle);
+            MyLogger.GetInstance().Info("Values parsed " + Bundle.Row + "," + Bundle.Column);
 
-            // if the player won
-            if (result == 2)
+            if (Bundle.Board.Grid[Bundle.Row, Bundle.Column].isFlagged == false)
             {
-                return View("gameWon");
+                // update board
+                int result = gameService.Update(Bundle);
+
+                // if the player won
+                if (result == 2)
+                {
+                    // instantiate service
+                    GameRecordService archiveService = new GameRecordService();
+
+                    // pass control to service
+                    archiveService.Archive(new GameRecordModel(-1, Bundle.User, Bundle.Difficulty, Bundle.Timer.ToString()));
+
+                    MyLogger.GetInstance().Info("Game Won!");
+                    return View("gameWon", Bundle);
+                }
+
+                // if the player lost
+                else if (result == 1)
+                {
+                    MyLogger.GetInstance().Info("Game Lost!");
+                    return View("gameLost", Bundle);
+                }
+
+                // otherwise
+                else
+                {
+                    Bundle.Timer = DateTime.Now - Bundle.StartTime;
+                    MyLogger.GetInstance().Info("Game Continues");
+                    //return PartialView("_board", Bundle);
+                    return View("gameBoard", Bundle);
+                }
             }
 
-            // if the player lost
-            else if (result == 1)
-            {
-                return View("gameLost", Bundle);
-            }
-
-            // otherwise
             else
             {
                 Bundle.Timer = DateTime.Now - Bundle.StartTime;
-                return PartialView("_board", Bundle);
+                MyLogger.GetInstance().Info("Can't reveal flagged cell");
+                return View("gameBoard", Bundle);
+                //return PartialView("_board", Bundle);
             }
+        }
+
+        public ActionResult HandleCellRightClick(string cell)
+        {
+            MyLogger.GetInstance().Info("Entering GameController.HandleCellRightClick()");
+            string[] coords = cell.Split(',');
+
+            // determine which cell was clicked
+            int row = Convert.ToInt32(coords[0]);
+            int column = Convert.ToInt32(coords[1]);
+
+            MyLogger.GetInstance().Info("Values parsed " + row + "," + column);
+
+            if (Bundle.Board.Grid[row, column].isFlagged == false)
+            {
+                MyLogger.GetInstance().Info("setting flag property to true");
+                Bundle.Board.Grid[row, column].isFlagged = true;
+            }
+
+            else
+            {
+                MyLogger.GetInstance().Info("setting flag property to false");
+                Bundle.Board.Grid[row, column].isFlagged = false;
+            }
+
+            Bundle.Timer = DateTime.Now - Bundle.StartTime;
+            //return PartialView("_board", Bundle);
+            return View("gameBoard", Bundle);
+        }
+
+        public ActionResult HandleSave()
+        {
+            try
+            {
+                // instantiate business service
+                GameService service = new GameService();
+
+                // instantiate model
+                GameStorageModel storageModel = new GameStorageModel(-1, JsonConvert.SerializeObject(Bundle), Bundle.User);
+
+                // pass control to service and catch return value
+                bool success = service.Save(storageModel);
+
+                // return view and boolean flag
+                return View("save", success);
+            }
+
+            catch (Exception e)
+            {
+                MyLogger.GetInstance().Warning(e.Message);
+                return View("exception");
+            }
+        }
+
+        public ActionResult HandleLoad()
+        {
+            try
+            {
+                // instantiate business service
+                GameService service = new GameService();
+
+                // pass control to service and catch return value
+                GameStorageModel businessLayerResponseModel = service.Load(Bundle.User);
+
+                // deserialize game state and save to bundle
+                Bundle = JsonConvert.DeserializeObject<GameBundle>(businessLayerResponseModel.GameState);
+
+                // return board view with bundle
+                return View("gameBoard", Bundle);
+            }
+
+            catch (Exception)
+            {
+                return View("exception");
+            }
+            
         }
     }
 }

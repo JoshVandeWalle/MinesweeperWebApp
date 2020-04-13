@@ -7,7 +7,7 @@
 
 <head>
     <style>
-        .game-piece {
+        .game-button {
             width: 45px;
         }
     </style>
@@ -20,7 +20,7 @@
     {
         for (int j = 0; j < Model.Board.Size; j++)
         {
-            <button class="game-piece" type="submit" name="cell" value="@i,@j">
+            <button class="game-button" type="submit" name="cell" value="@i,@j">
                 @if (Model.Board.Grid[i, j].Live == true)
                 {
                     <p>!</p>

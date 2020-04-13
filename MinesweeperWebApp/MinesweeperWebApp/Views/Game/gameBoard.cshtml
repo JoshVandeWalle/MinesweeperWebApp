@@ -13,37 +13,67 @@
 <head>
 
     
-
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
 
 
     <style>
-        .game-piece {
+        .game-button {
             width: 45px;
         }
     </style>
+
+    <script>
+        $(document).ready(function () {
+            $(document).contextmenu(function () {
+                return false;
+            });
+
+            $('.game-button').mousedown(function (event) {
+                if (event.which == 3) {
+                    console.log("right click");
+                    console.log(this.getAttribute("value"));
+
+                    // send information to controller
+
+                    // URL, data, callback
+                    $.post("@Url.Action("HandleCellRightClick", "Game")", { cell: this.getAttribute("value")}, function (data) {
+                        //console.log(data);
+                        // refresh
+                        $("body").html(data);
+                    });
+                }
+            });
+        });
+    </script>
 </head>
 
 <body>
-    <h2>gameBoard</h2>
+    <h2>Minesweeper!</h2>
     <br />
-   
 
-    @using (Ajax.BeginForm("HandleCellClick", "Game", ajaxOptions, new { id = "grid" }))
+
+    <!-- using (Ajax.BeginForm("HandleCellClick", "Game", ajaxOptions, new { id = "grid" })) -->
+    @using (Html.BeginForm("HandleCellClick", "Game"))
     {
 
         @Html.AntiForgeryToken();
 
         <div id="grid">
             <p>Time: </p> @Model.Timer.ToString()
-                <br />
+            <br />
             @for (int i = 0; i < Model.Board.Size; i++)
             {
                 for (int j = 0; j < Model.Board.Size; j++)
                 {
-                    <button class="game-piece" game-piece" type="submit" name="cell" value="@i,@j">
-                        @if (Model.Board.Grid[i, j].Visited == false)
+                    <button class="game-button" type="submit" name="cell" value="@i,@j">
+                        @if (Model.Board.Grid[i, j].Visited == false && Model.Board.Grid[i, j].isFlagged == false)
                         {
                             <p>?</p>
+                        }
+
+                        else if (Model.Board.Grid[i, j].Visited == false && Model.Board.Grid[i, j].isFlagged == true)
+                        {
+                            <p>F</p>
                         }
 
                         else if (Model.Board.Grid[i, j].liveNeighbors == 0)
@@ -62,6 +92,16 @@
             }
         </div>
 
+    }
+
+    @using (Html.BeginForm("HandleSave", "Game"))
+    {
+        <button type="submit" name="save">Save Game</button>
+    }
+
+    @using (Html.BeginForm("HandleLoad", "Game"))
+    {
+        <button type="submit" name="load">Load Game</button>
     }
 </body>
 </html>
