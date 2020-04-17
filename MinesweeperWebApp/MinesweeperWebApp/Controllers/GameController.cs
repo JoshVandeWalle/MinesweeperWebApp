@@ -17,10 +17,19 @@ namespace MinesweeperWebApp.Controllers
     public class GameController : Controller
     {
         public static GameBundle Bundle { get; set; }
+        public ILogger Logger;
 
-        
+        public GameController(ILogger logger)
+        {
+            Logger = logger;
+        }
+
+
 
         // start the game
+        // authorization required
+        [HttpPost]
+        [MinesweeperAuthorization]
         public ActionResult StartGame(string difficulty)
         {
             // the difficulty the player selected on the previous form
@@ -48,9 +57,11 @@ namespace MinesweeperWebApp.Controllers
         /*
          * this method handles a cell click
          */
+        [HttpPost]
+        [MinesweeperAuthorization]
         public ActionResult HandleCellClick(string cell)
         {
-            MyLogger.GetInstance().Info("Entering GameController.HandleCellClick()");
+            Logger.Info("Entering GameController.HandleCellClick()");
             GameService gameService = new GameService();
 
             string[] coords = cell.Split(',');
@@ -59,7 +70,7 @@ namespace MinesweeperWebApp.Controllers
             Bundle.Row = Convert.ToInt32(coords[0]);
             Bundle.Column = Convert.ToInt32(coords[1]);
 
-            MyLogger.GetInstance().Info("Values parsed " + Bundle.Row + "," + Bundle.Column);
+            Logger.Info("Values parsed " + Bundle.Row + "," + Bundle.Column);
 
             if (Bundle.Board.Grid[Bundle.Row, Bundle.Column].isFlagged == false)
             {
@@ -75,14 +86,14 @@ namespace MinesweeperWebApp.Controllers
                     // pass control to service
                     archiveService.Archive(new GameRecordModel(-1, Bundle.User, Bundle.Difficulty, Bundle.Timer.ToString()));
 
-                    MyLogger.GetInstance().Info("Game Won!");
+                    Logger.Info("Game Won!");
                     return View("gameWon", Bundle);
                 }
 
                 // if the player lost
                 else if (result == 1)
                 {
-                    MyLogger.GetInstance().Info("Game Lost!");
+                    Logger.Info("Game Lost!");
                     return View("gameLost", Bundle);
                 }
 
@@ -90,7 +101,7 @@ namespace MinesweeperWebApp.Controllers
                 else
                 {
                     Bundle.Timer = DateTime.Now - Bundle.StartTime;
-                    MyLogger.GetInstance().Info("Game Continues");
+                    Logger.Info("Game Continues");
                     //return PartialView("_board", Bundle);
                     return View("gameBoard", Bundle);
                 }
@@ -99,32 +110,35 @@ namespace MinesweeperWebApp.Controllers
             else
             {
                 Bundle.Timer = DateTime.Now - Bundle.StartTime;
-                MyLogger.GetInstance().Info("Can't reveal flagged cell");
+                Logger.Info("Can't reveal flagged cell");
                 return View("gameBoard", Bundle);
                 //return PartialView("_board", Bundle);
             }
         }
 
+        // authorization required
+        [HttpPost]
+        [MinesweeperAuthorization]
         public ActionResult HandleCellRightClick(string cell)
         {
-            MyLogger.GetInstance().Info("Entering GameController.HandleCellRightClick()");
+            Logger.Info("Entering GameController.HandleCellRightClick()");
             string[] coords = cell.Split(',');
 
             // determine which cell was clicked
             int row = Convert.ToInt32(coords[0]);
             int column = Convert.ToInt32(coords[1]);
 
-            MyLogger.GetInstance().Info("Values parsed " + row + "," + column);
+            Logger.Info("Values parsed " + row + "," + column);
 
             if (Bundle.Board.Grid[row, column].isFlagged == false)
             {
-                MyLogger.GetInstance().Info("setting flag property to true");
+                Logger.Info("setting flag property to true");
                 Bundle.Board.Grid[row, column].isFlagged = true;
             }
 
             else
             {
-                MyLogger.GetInstance().Info("setting flag property to false");
+                Logger.Info("setting flag property to false");
                 Bundle.Board.Grid[row, column].isFlagged = false;
             }
 
@@ -133,6 +147,9 @@ namespace MinesweeperWebApp.Controllers
             return View("gameBoard", Bundle);
         }
 
+        // authorization required
+        [HttpPost]
+        [MinesweeperAuthorization]
         public ActionResult HandleSave()
         {
             try
@@ -146,17 +163,22 @@ namespace MinesweeperWebApp.Controllers
                 // pass control to service and catch return value
                 bool success = service.Save(storageModel);
 
+                Logger.Info("Game saved successfully!");
+
                 // return view and boolean flag
                 return View("save", success);
             }
 
             catch (Exception e)
             {
-                MyLogger.GetInstance().Warning(e.Message);
+                Logger.Error("Failed to save game: " + e.Message);
                 return View("exception");
             }
         }
 
+        // authorization required
+        [HttpPost]
+        [MinesweeperAuthorization]
         public ActionResult HandleLoad()
         {
             try
@@ -170,12 +192,15 @@ namespace MinesweeperWebApp.Controllers
                 // deserialize game state and save to bundle
                 Bundle = JsonConvert.DeserializeObject<GameBundle>(businessLayerResponseModel.GameState);
 
+                Logger.Info("Game loaded successfully!");
+
                 // return board view with bundle
                 return View("gameBoard", Bundle);
             }
 
-            catch (Exception)
+            catch (Exception e)
             {
+                Logger.Error("Failed to load game: " + e.Message);
                 return View("exception");
             }
             

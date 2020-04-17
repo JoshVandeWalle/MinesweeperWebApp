@@ -12,17 +12,31 @@ namespace MinesweeperWebApp.Controllers
 {
     public class AccountController : Controller
     {
+        // the logger. This dependency will be injected
+        Services.Utility.ILogger Logger;
 
-        // this code is automatically generated
-        public ActionResult Index()
+        /*
+         * non-default constructor used dependency injection 
+         */
+        public AccountController(Services.Utility.ILogger logger)
         {
-            return View();
+            Logger = logger;
         }
 
         // return the login form
         public ActionResult ShowLoginForm()
         {
-            return View("ShowLoginForm");
+            try
+            {
+                return View("ShowLoginForm");
+            }
+
+            catch(Exception e)
+            {
+                Logger.Error("Failed loading login form view: " + e.Message);
+                // TODO make common error page
+                return View();
+            }
         }
 
         // authenticate the user
@@ -30,10 +44,8 @@ namespace MinesweeperWebApp.Controllers
         {
             try
             {
-                
-
                 //log entry into method
-                MyLogger.GetInstance().Info("Entering AccountController.Authenticate()");
+                Logger.Info("Entering AccountController.Authenticate()");
 
                 // instantiate the business service
                 UserBusinessService BusinessService = new UserBusinessService();
@@ -47,7 +59,7 @@ namespace MinesweeperWebApp.Controllers
                     Cache.AccessCache().Put("activeAccount", credentialSet.Email);
 
                     //log success
-                    MyLogger.GetInstance().Info("Exiting AccountController.Authenticate() with login success");
+                    Logger.Info("Exiting AccountController.Authenticate() with login success");
 
                     return View("loginSuccess");
                 }
@@ -56,7 +68,7 @@ namespace MinesweeperWebApp.Controllers
                 else
                 {
                     //log failure
-                    MyLogger.GetInstance().Info("Exiting AccountController.Authenticate() with login failure");
+                    Logger.Info("Exiting AccountController.Authenticate() with login failure");
 
                     return View("loginFail");
                 }
@@ -64,15 +76,25 @@ namespace MinesweeperWebApp.Controllers
 
             catch (Exception e)
             {
-                MyLogger.GetInstance().Error("Exiting AccountController.Authenticate() with an exception: " + e.Message);
-                return Content("Exception in login" + e.Message);
+                Logger.Error("Exiting AccountController.Authenticate() with an exception: " + e.Message);
+                return Content("Exception in login: " + e.Message);
             }
         }
 
         // return registration form
         public ActionResult ShowRegistrationForm()
         {
-            return View("ShowRegistrationForm");
+            try
+            {
+                return View("ShowRegistrationForm");
+            }
+
+            catch (Exception e)
+            {
+                Logger.Error("Failed loading registration form view: " + e.Message);
+                // TODO make common error page
+                return View();
+            }
         }
 
         // attempt to make a new account
@@ -86,12 +108,14 @@ namespace MinesweeperWebApp.Controllers
             // if registration succeeds return the success view
             if (registerSuccess)
             {
+                Logger.Info("Registration successful");
                 return View("registerSuccess");
             }
 
             // otherwise return the registration failure view
             else
             {
+                Logger.Error("Registration unsuccessful");
                 return View("registerFail");
             }
         }

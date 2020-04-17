@@ -8,29 +8,17 @@ namespace MinesweeperWebApp.Services.Utility
 {
     public class MyLogger : ILogger
     {
-        private static MyLogger instance;
-        private static Logger logger;
-
-        private MyLogger() {}
-
-        public static MyLogger GetInstance()
-        {
-            if (instance == null)
-            {
-                instance = new MyLogger();
-            }
-
-            return instance;
-        }
+        private MyLogger instance;
+        private Logger logger;
 
         private Logger GetLogger(string theLogger)
         {
-            if (MyLogger.logger == null)
+            if (logger == null)
             {
-                MyLogger.logger = LogManager.GetLogger(theLogger);
+                logger = LogManager.GetLogger(theLogger);
             }
 
-            return MyLogger.logger;
+            return logger;
         }
 
         public void Debug(string message, string arg = null)
