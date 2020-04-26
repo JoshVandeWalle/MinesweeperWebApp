@@ -20,6 +20,12 @@
         {
             <p>There was a problem saving the game</p>
         }
+
+        <br /> 
+        @using (Html.BeginForm("HandleDifficultyScreenDisplay", "Account"))
+        {
+            <button type="submit" name="save">Go Back</button>
+        }
     </div>
 </body>
 

@@ -48,60 +48,68 @@
 </head>
 
 <body>
-    <h2>Minesweeper!</h2>
-    <br />
+    <div align="center">
+        <h2>Minesweeper!</h2>
+        <br />
 
 
-    <!-- using (Ajax.BeginForm("HandleCellClick", "Game", ajaxOptions, new { id = "grid" })) -->
-    @using (Html.BeginForm("HandleCellClick", "Game"))
-    {
 
-        @Html.AntiForgeryToken();
+        <!-- using (Ajax.BeginForm("HandleCellClick", "Game", ajaxOptions, new { id = "grid" })) -->
+        @using (Html.BeginForm("HandleCellClick", "Game"))
+        {
 
-        <div id="grid">
-            <p>Time: </p> @Model.Timer.ToString()
-            <br />
-            @for (int i = 0; i < Model.Board.Size; i++)
-            {
-                for (int j = 0; j < Model.Board.Size; j++)
-                {
-                    <button class="game-button" type="submit" name="cell" value="@i,@j">
-                        @if (Model.Board.Grid[i, j].Visited == false && Model.Board.Grid[i, j].isFlagged == false)
-                        {
-                            <p>?</p>
-                        }
+            @Html.AntiForgeryToken();
 
-                        else if (Model.Board.Grid[i, j].Visited == false && Model.Board.Grid[i, j].isFlagged == true)
-                        {
-                            <p>F</p>
-                        }
-
-                        else if (Model.Board.Grid[i, j].liveNeighbors == 0)
-                        {
-                            <p>-</p>
-                        }
-
-                        else
-                        {
-                            <p>@Model.Board.Grid[i, j].liveNeighbors </p>
-
-                        }
-                    </button>
-                }
+            <div id="grid">
+                <p>Time: </p> @Model.Timer.ToString()
                 <br />
-            }
-        </div>
+                @for (int i = 0; i < Model.Board.Size; i++)
+                {
+                    for (int j = 0; j < Model.Board.Size; j++)
+                    {
+                        <button class="game-button" type="submit" name="cell" value="@i,@j">
+                            @if (Model.Board.Grid[i, j].Visited == false && Model.Board.Grid[i, j].isFlagged == false)
+                            {
+                                <p>?</p>
+                            }
 
-    }
+                            else if (Model.Board.Grid[i, j].Visited == false && Model.Board.Grid[i, j].isFlagged == true)
+                            {
+                                <img src="~/Images/flag.jpg" />
+                            }
 
-    @using (Html.BeginForm("HandleSave", "Game"))
-    {
-        <button type="submit" name="save">Save Game</button>
-    }
+                            else if (Model.Board.Grid[i, j].liveNeighbors == 0)
+                            {
+                                <p>-</p>
+                            }
 
-    @using (Html.BeginForm("HandleLoad", "Game"))
-    {
-        <button type="submit" name="load">Load Game</button>
-    }
+                            else
+                            {
+                                <p>@Model.Board.Grid[i, j].liveNeighbors </p>
+
+                            }
+                        </button>
+                    }
+                    <br />
+                }
+            </div>
+
+        }
+
+        @using (Html.BeginForm("HandleSave", "Game"))
+        {
+            <button type="submit" name="save">Save Game</button>
+        }
+
+        @using (Html.BeginForm("HandleLoad", "Game"))
+        {
+            <button type="submit" name="load">Load Game</button>
+        }
+
+        @using (Html.BeginForm("HandleLogout", "Account"))
+        {
+            <button type="submit" name="load">Sign Out</button>
+        }
+    </div>
 </body>
 </html>

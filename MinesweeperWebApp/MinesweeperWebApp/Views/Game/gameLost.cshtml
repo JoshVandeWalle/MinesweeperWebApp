@@ -14,28 +14,36 @@
     </style>
 </head>
 <body>
-    <h2>You Lost!</h2><br />
-    <p>Time: </p> @Model.Timer.ToString()
-    <br />
-    @for (int i = 0; i < Model.Board.Size; i++)
-    {
-        for (int j = 0; j < Model.Board.Size; j++)
-        {
-            <button class="game-button" type="submit" name="cell" value="@i,@j">
-                @if (Model.Board.Grid[i, j].Live == true)
-                {
-                    <p>!</p>
-                }
-
-                else
-                {
-                    <p>-</p>
-
-                }
-            </button>
-        }
+    <div align="center">
+        <h2>You Lost!</h2><br />
+        <p>Time: </p> @Model.Timer.ToString()
         <br />
-    }
+        @for (int i = 0; i < Model.Board.Size; i++)
+        {
+            for (int j = 0; j < Model.Board.Size; j++)
+            {
+                <button class="game-button" type="submit" name="cell" value="@i,@j">
+                    @if (Model.Board.Grid[i, j].Live == true)
+                    {
+                        <img src="~/Images/bomb.jpg" />
+                    }
+
+                    else
+                    {
+                        <p>-</p>
+
+                    }
+                </button>
+            }
+            <br />
+        }
+
+        @using (Html.BeginForm("HandleDifficultyScreenDisplay", "Account"))
+        {
+            <button type="submit" name="save">Go Back</button>
+        }
+
+    </div>
 </body>
 </html>
 
